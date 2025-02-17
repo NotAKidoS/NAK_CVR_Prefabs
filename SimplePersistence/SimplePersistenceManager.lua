@@ -60,24 +60,6 @@ SimplePersistenceManager = {
     WORLD_SETTINGS_KEY = "SPM-World-Settings"
 }
 
--- Type Detection --
-
--- TODO: awaiting method of getting type as string
--- https://feedback.abinteractive.net/p/please-provide-a-method-for-getting-the-type-of-an-object-via-scripting
-
-local function getObjectType(obj)
-    local objString = obj:ToString()
-    if objString == "ABI.Scripting.CVRSTL.Common.UnityEngine.UI._LUAINSTANCE_ScriptedToggle" then
-        return "UI.Toggle"
-    elseif string.find(objString, "%(UnityEngine%.GameObject%)") ~= nil then
-        return "GameObject"
-    elseif string.find(objString, "%(UnityEngine%.Transform%)") ~= nil then
-        return "Transform"
-    else
-        return nil
-    end
-end
-
 -- Behavior Definitions --
 
 -- I cannot think of anything else other than Toggles, GameObjects, and Transforms rn
@@ -85,7 +67,7 @@ end
 
 local behaviors = {}
 
-behaviors["UI.Toggle"] = {
+behaviors["UnityEngine.UI.Toggle"] = {
     applyState = function(obj, state)
         if state and state.isOn ~= nil then
             obj.isOn = state.isOn
@@ -105,7 +87,7 @@ behaviors["UI.Toggle"] = {
     end
 }
 
-behaviors["GameObject"] = {
+behaviors["UnityEngine.GameObject"] = {
     applyState = function(obj, state)
         if state and state.active ~= nil then
             obj:SetActive(state.active)
@@ -123,7 +105,7 @@ behaviors["GameObject"] = {
     end
 }
 
-behaviors["Transform"] = {
+behaviors["UnityEngine.Transform"] = {
     applyState = function(obj, state)
         if state then
             if state.position then
@@ -181,7 +163,7 @@ function SimplePersistenceManager:Start()
     -- Build objectList and apply saved states
     for name, obj in pairs(BoundObjects) do
         local sanitizedName = sanitizeString(name)
-        local objType = getObjectType(obj)
+        local objType = typeof(obj)
         if objType then
             local behavior = behaviors[objType]
             if behavior then
