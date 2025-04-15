@@ -140,7 +140,7 @@ function SimplePersistenceManager:Start()
     self.WORLD_SETTINGS_KEY = sanitizeString(self.WORLD_SETTINGS_KEY)
 
     -- Copy all values to our local worldSettings table as we cannot modify the returned output...
-    self.worldSettings = self.storage:GetTable(self.WORLD_SETTINGS_KEY)
+    self.worldSettings = self.storage:GetTable(self.WORLD_SETTINGS_KEY) or {}
     local isDirty = false
 
     -- Build objectList and apply saved states
