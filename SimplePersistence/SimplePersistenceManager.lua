@@ -211,7 +211,6 @@ function SimplePersistenceManager:Update()
                 PrintDebug("State change detected for '" .. name .. "'. Saving new state.")
                 self.worldSettings[sanitizedName] = currentState
                 self.storage:SetTable(self.WORLD_SETTINGS_KEY, self.worldSettings)
-                self.storage:Save()
             end
         else
             PrintDebug("No behavior defined for type '" .. objType .. "'")
