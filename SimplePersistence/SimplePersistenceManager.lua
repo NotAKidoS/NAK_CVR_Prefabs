@@ -4,21 +4,6 @@ Time = UnityEngine.Time
 
 -- Utility Functions --
 
-local function deepCopy(orig)
-    local orig_type = type(orig)
-    local copy
-    if orig_type == 'table' then
-        copy = {}
-        for orig_key, orig_value in next, orig, nil do
-            copy[deepCopy(orig_key)] = deepCopy(orig_value)
-        end
-        setmetatable(copy, deepCopy(getmetatable(orig)))
-    else
-        copy = orig
-    end
-    return copy
-end
-
 local function sanitizeString(str)
     if type(str) ~= "string" or str == "" then
         return "empty"
@@ -154,10 +139,8 @@ function SimplePersistenceManager:Start()
     -- Ensure master key is not illegal...
     self.WORLD_SETTINGS_KEY = sanitizeString(self.WORLD_SETTINGS_KEY)
 
-    self.storage:Load()
-
     -- Copy all values to our local worldSettings table as we cannot modify the returned output...
-    self.worldSettings = deepCopy(self.storage:GetTable(self.WORLD_SETTINGS_KEY) or {})
+    self.worldSettings = self.storage:GetTable(self.WORLD_SETTINGS_KEY)
     local isDirty = false
 
     -- Build objectList and apply saved states
@@ -204,7 +187,6 @@ function SimplePersistenceManager:Start()
     -- Save updated settings if dirty
     if isDirty then
         self.storage:SetTable(self.WORLD_SETTINGS_KEY, self.worldSettings)
-        self.storage:Save()
     end
 end
 
